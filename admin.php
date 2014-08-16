@@ -72,7 +72,7 @@ class Admin extends \JFusion\Plugin\Admin
 	 */
 	function getMagentoVersion($forumPath)
 	{
-    	$file = file_get_contents(rtrim($forumPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Mage.php');
+    	$file = file_get_contents(rtrim($forumPath, DIRECTORY_SEPARATOR) . '/app/Mage.php');
 
 		$pstart = strpos($file, 'function getVersionInfo()');
 		$pstart = strpos($file, 'return', $pstart);
@@ -90,7 +90,7 @@ class Admin extends \JFusion\Plugin\Admin
      */
     function setupFromPath($softwarePath)
     {
-        $xmlfile = $softwarePath . 'app' . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'local.xml';
+        $xmlfile = $softwarePath . 'app/etc/local.xml';
         $params = array();
         if (file_exists($xmlfile)) {
 	        $xml = Framework::getXml($xmlfile);
@@ -214,8 +214,6 @@ class Admin extends \JFusion\Plugin\Admin
 		    } else {
 			    //finally check if the apiuser and apikey are valid
 			    try {
-				    require_once JFUSION_PLUGIN_PATH . DIRECTORY_SEPARATOR . $this->getJname() . DIRECTORY_SEPARATOR . 'soapclient.php';
-
 				    $proxi = new Soapclient($apipath);
 				    if($proxi->login($apiuser, $apikey)) {
 					    // all ok

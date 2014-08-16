@@ -68,8 +68,6 @@ class User extends \JFusion\Plugin\User
 			throw new RuntimeException('Could not login to Magento API (empty apiuser and/or apikey)');
 		} else {
 			try {
-				require_once JFUSION_PLUGIN_PATH . DIRECTORY_SEPARATOR . $this->getJname() . DIRECTORY_SEPARATOR . 'soapclient.php';
-
 				$proxi = new Soapclient($apipath);
 				if($proxi->login($apiuser, $apikey)) {
 					$this->debugger->addDebug('Logged into Magento API as ' . $apiuser . ' using key, message:' . $apikey);
