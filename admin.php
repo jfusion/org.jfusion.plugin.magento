@@ -81,11 +81,10 @@ class Admin extends \JFusion\Plugin\Admin
 
     	return $version['major'] . '.' . $version['minor'] . '.' . $version['revision'];
     }
-    
-    
 
     /**
      * @param string $softwarePath
+     *
      * @return array
      */
     function setupFromPath($softwarePath)
