@@ -253,7 +253,7 @@ class User extends \JFusion\Plugin\User
 						$query = $db->getQuery(true)
 							->select('customer_group_code')
 							->from('#__customer_group')
-							->where('customer_group_id = ' . $result->group_id);
+							->where('customer_group_id = ' . (int)$result->group_id);
 
 						$db->setQuery($query);
 						$instance->group_name = $db->loadResult();
@@ -397,13 +397,15 @@ class User extends \JFusion\Plugin\User
 				$db->setQuery($query);
 				$db->execute();
 			}
+
+
 			// the basic userrecord is created, now update/create the eav records
 			for ($i = 0;$i < count($user);$i++) {
 				if ($user[$i]['backend_type'] == 'static') {
 					if (isset($user[$i]['value'])) {
 						$query = $db->getQuery(true)
 							->update('#__customer_entity')
-							->set($user[$i]['attribute_code']. ' = ' . $db->quote($user[$i]['value']))
+							->set($db->quoteName($user[$i]['attribute_code']) . ' = ' . $db->quote($user[$i]['value']))
 							->where('entity_id = ' . (int)$entity_id);
 
 						$db->setQuery($query);
@@ -413,7 +415,7 @@ class User extends \JFusion\Plugin\User
 					if (isset($user[$i]['value'])) {
 						$query = $db->getQuery(true)
 							->select('value')
-							->from('#__customer_entity' . '_' . $user[$i]['backend_type'])
+							->from($db->quoteName('#__customer_entity_' . $user[$i]['backend_type']))
 							->where('entity_id = ' . (int)$entity_id)
 							->where('entity_type_id = ' . (int)$this->getMagentoEntityTypeID('customer'))
 							->where('attribute_id = ' . (int)$user[$i]['attribute_id']);
@@ -426,13 +428,13 @@ class User extends \JFusion\Plugin\User
 							// we do not update an empty value, but remove the record instead
 							if ($user[$i]['value'] == '') {
 								$query = $db->getQuery(true)
-									->delete('#__customer_entity' . '_' . $user[$i]['backend_type'])
+									->delete($db->quoteName('#__customer_entity_' . $user[$i]['backend_type']))
 									->where('entity_id = ' .  (int)$entity_id)
 									->where('entity_type_id = ' .  (int)$this->getMagentoEntityTypeID('customer'))
 									->where('attribute_id = ' .  (int)$user[$i]['attribute_id']);
 							} else {
 								$query = $db->getQuery(true)
-									->update('#__customer_entity'. '_' . $user[$i]['backend_type'])
+									->update($db->quoteName('#__customer_entity_' . $user[$i]['backend_type']))
 									->set('value = ' . $db->quote($user[$i]['value']))
 									->where('entity_id = ' . (int)$entity_id)
 									->where('entity_type_id = ' . (int)$this->getMagentoEntityTypeID('customer'))
@@ -446,7 +448,7 @@ class User extends \JFusion\Plugin\User
 							$entry->entity_id = $entity_id;
 							$entry->entity_type_id = (int)$this->getMagentoEntityTypeID('customer');
 
-							$db->insertObject('#__customer_entity' . '_' . $user[$i]['backend_type'], $entry);
+							$db->insertObject($db->quoteName('#__customer_entity_' . $user[$i]['backend_type']), $entry);
 						}
 						$db->setQuery($query);
 						$db->execute();
