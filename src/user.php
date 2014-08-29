@@ -246,9 +246,9 @@ class User extends \JFusion\Plugin\User
 				$result = $db->loadObject();
 				if ($result) {
 					$instance = new stdClass;
-					$instance->group_id = $result->group_id;
-					if ($instance->group_id == 0) {
-						$instance->group_name = 'Default Usergroup';
+					$instance->groups = array($result->group_id);
+					if ($result->group_id == 0) {
+						$instance->groupnames = array('Default Usergroup');
 					} else {
 						$query = $db->getQuery(true)
 							->select('customer_group_code')
@@ -256,10 +256,8 @@ class User extends \JFusion\Plugin\User
 							->where('customer_group_id = ' . (int)$result->group_id);
 
 						$db->setQuery($query);
-						$instance->group_name = $db->loadResult();
+						$instance->groupnames = array($db->loadResult());
 					}
-					$instance->groups = array($instance->group_id);
-					$instance->groupnames = array($instance->group_name);
 
 					$magento_user['email']['value'] = $result->email;
 					$magento_user['created_at']['value'] = $result->created_at;
